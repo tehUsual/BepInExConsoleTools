@@ -39,8 +39,8 @@ public partial class Plugin : BaseUnityPlugin
 
 
 		// Set default source and caller config for all ConsoleConfig.LogColor()
-        ConsoleConfig.SetDefaultSourceColor(ConsoleColor.DarkYellow);
-        ConsoleConfig.SetDefaultCallerColor(ConsoleColor.DarkCyan);
+        ConsoleConfig.SetDefaultSourceColor(ConsoleColor.DarkCyan);
+        ConsoleConfig.SetDefaultCallerColor(ConsoleColor.DarkYellow);
 	}
 
 
