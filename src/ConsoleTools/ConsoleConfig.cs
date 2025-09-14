@@ -12,6 +12,10 @@ public static class ConsoleConfig
     //internal static readonly HashSet<string> RegisteredPlugins = new(StringComparer.OrdinalIgnoreCase);
     internal static readonly Dictionary<string, bool> RegisteredPlugins = new(StringComparer.OrdinalIgnoreCase);
     
+    // Color config
+    internal static ConsoleColor SourceColor { get; private set; } = ConsoleColor.Gray;
+    internal static ConsoleColor CallerColor { get; private set; } = ConsoleColor.Gray;
+    
     
     /// <summary>
     /// Registers a plugin by adding it to the registered plugins list.
@@ -43,4 +47,7 @@ public static class ConsoleConfig
             RegisteredPlugins[pluginName] = enable;
         }
     }
+
+    public static void SetDefaultSourceColor(ConsoleColor color) => SourceColor = color;
+    public static void SetDefaultCallerColor(ConsoleColor color) => CallerColor = color;
 }

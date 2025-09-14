@@ -7,15 +7,22 @@ namespace ConsoleTools;
 public static class ManualLogSourceExtensions
 {
     /// <summary>
-    /// Logs a message to a <see cref="ManualLogSource"/> with a specified color and optional caller information.
+    /// Logs a message to the provided <see cref="ManualLogSource"/> in a specified console color.
     /// </summary>
     /// <param name="log">The <see cref="ManualLogSource"/> instance to use for logging.</param>
-    /// <param name="message">The message to log.</param>
-    /// <param name="color">The color to display the message in the console. Defaults to <see cref="ConsoleColor.Gray"/>.</param>
-    /// <param name="callerInfo">Indicates whether to include caller information in the log. Defaults to <c>true</c>.</param>
+    /// <param name="message">The message to be logged.</param>
+    /// <param name="color">The color to display the logged message in. Defaults to <see cref="ConsoleColor.Gray"/>.</param>
+    /// <param name="callerInfo">
+    /// Boolean indicating whether to include the caller information (class and method name) in the log message.
+    /// Defaults to <c>true</c>.
+    /// </param>
+    /// <param name="oneColor">
+    /// Boolean flag to specify usage of a single consistent color throughout the message.
+    /// Defaults to <c>false</c>.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown if the <paramref name="log"/> parameter is <c>null</c>.</exception>
     public static void LogColor(this ManualLogSource log, string message, ConsoleColor color = ConsoleColor.Gray,
-        bool callerInfo = true)
+        bool callerInfo = true, bool oneColor = false)
     {
         if (log == null) throw new ArgumentNullException(nameof(log));
 
@@ -30,9 +37,19 @@ public static class ManualLogSourceExtensions
 
             callerInfoStr = $"[{className}.{methodName}] ";
         }
-
-        int colorValue = (int)color;
-        string code = $"#CC{colorValue:D2}";
-        log.LogInfo($"{code}{callerInfoStr}{message}");
+        
+        if (oneColor)
+        {
+            string code = $"#CC{(int)color:D2}";
+            log.LogInfo($"{code}{callerInfoStr}{message}");
+        }
+        else
+        {
+            string sourceColorCode = $"#CS{((int)ConsoleConfig.SourceColor):D2}";
+            string callerColorCode = $"#CS{((int)ConsoleConfig.CallerColor):D2}";
+            string msgColorCode = $"#CS{(int)color:D2}";
+            
+            log.LogInfo($"{sourceColorCode}{callerColorCode}{callerInfoStr}{msgColorCode}{message}");
+        }
     }
 }

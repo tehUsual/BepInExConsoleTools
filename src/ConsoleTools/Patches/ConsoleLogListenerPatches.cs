@@ -22,18 +22,63 @@ public static class ConsoleLogListenerPatches
             return true;
         
         string message = eventArgs.Data.ToString();
-        ConsoleColor color = ConsoleColor.Gray;
+        ConsoleColor defaultColor = ConsoleColor.Gray;
 
         if (message.StartsWith("#CC") && message.Length >= 5)
         {
+            // Single-color line
             if (int.TryParse(message.Substring(3, 2), out int colorValue))
             {
-                color = (ConsoleColor)colorValue;
+                defaultColor = (ConsoleColor)colorValue;
                 message = message.Substring(5);
             }
+            
+            ConsoleManagerReflection.Write($"[Info   :{eventArgs.Source.SourceName}] {message}", defaultColor);
+        }
+        else if (message.StartsWith("#CS") && message.Length >= 5)
+        {
+            int index = 0;
+            ConsoleColor currentColor = defaultColor;
+
+            // Check if the first #CS code exists at the start for prefix
+            if (int.TryParse(message.Substring(3, 2), out int prefixColorValue))
+            {
+                currentColor = (ConsoleColor)prefixColorValue;
+                index = 5; // skip the first #CSxx
+            }
+
+            // Print prefix with the first color
+            string prefix = $"[Info   :{eventArgs.Source.SourceName}] ";
+            ConsoleManagerReflection.Write(prefix, currentColor, false);
+
+            // Process the rest of the message
+            while (index < message.Length)
+            {
+                if (message.Length - index >= 5 && message.Substring(index, 3) == "#CS")
+                {
+                    if (int.TryParse(message.Substring(index + 3, 2), out int colorValue))
+                    {
+                        currentColor = (ConsoleColor)colorValue;
+                        index += 5; // skip this color code
+                        continue;
+                    }
+                }
+
+                // Find the next #CS or end of string
+                int nextCode = message.IndexOf("#CS", index, StringComparison.Ordinal);
+                int length = (nextCode == -1 ? message.Length : nextCode) - index;
+
+                string segmentText = message.Substring(index, length);
+                ConsoleManagerReflection.Write(segmentText, currentColor, false);
+
+                index += length;
+            }
+
+            // Finish the line
+            ConsoleManagerReflection.Write("", defaultColor);
         }
 
-        ConsoleManagerReflection.WriteLine($"[Info   :{eventArgs.Source.SourceName}] {message}", color);
+
         return false; // prevent default log handling
     }
 }

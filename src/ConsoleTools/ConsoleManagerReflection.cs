@@ -36,13 +36,16 @@ internal static class ConsoleManagerReflection
         SetConsoleColorMethod?.Invoke(null, [color]);
     }
 
-    internal static void WriteLine(string message, ConsoleColor? color = null)
+    internal static void Write(string message, ConsoleColor? color = null, bool newline = true)
     {
         if (color.HasValue)
             SetColor(color.Value);
 
-        ConsoleStream?.WriteLine(message);
-
+        if (newline)
+            ConsoleStream?.WriteLine(message);
+        else
+            ConsoleStream?.Write(message);
+        
         if (color.HasValue)
             SetColor(ConsoleColor.Gray);
     }
