@@ -6,6 +6,19 @@ A lightweight console utility for BepInEx plugins that adds colored output and c
 ![ConsoleColor Example](consolecolor.png)
   
   
+  
+### Install
+Clone the repo, open your projects *.csproj and add this:
+```xml
+    <ItemGroup>
+        <Compile Include="..\..\..\ConsoleTools\src\ConsoleTools\**\*.cs">
+            <Link>ConsoleTools\%(RecursiveDir:ConsoleTools\)%(Filename)%(Extension)</Link>
+        </Compile>
+    </ItemGroup>
+```
+  
+  
+
 ### Usage
 ```cs
 using ConsoleTools;
@@ -41,6 +54,14 @@ public partial class Plugin : BaseUnityPlugin
 		// Set default source and caller config for all ConsoleConfig.LogColor()
         ConsoleConfig.SetDefaultSourceColor(ConsoleColor.DarkCyan);
         ConsoleConfig.SetDefaultCallerColor(ConsoleColor.DarkYellow);
+		
+		// Logging level
+		Log.LogColor("msg");	//	LogLevel.Info		-	defaults to gray
+		Log.LogColorW("msg");	//	LogLevel.Warning	-	defaults to dark yellow
+		Log.LogColorE("msg");	//	LogLevel.Error		-	defaults to dark red
+		Log.LogColorF("msg");	//	LogLevel.Fatal		-	defaults to dark red
+		Log.LogColorD("msg");	//	LogLevel.Debug		-	defaults to gray
+		Log.LogColorS("msg");	//	LogLevel.Info		-	defaults to dark green (success)
 	}
 
 

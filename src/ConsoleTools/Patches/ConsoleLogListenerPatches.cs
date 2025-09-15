@@ -40,7 +40,7 @@ public static class ConsoleLogListenerPatches
             int index = 0;
             ConsoleColor currentColor = defaultColor;
 
-            // Check if the first #CS code exists at the start for prefix
+            // Check if the first #CS code exists at the start for the prefix
             if (int.TryParse(message.Substring(3, 2), out int prefixColorValue))
             {
                 currentColor = (ConsoleColor)prefixColorValue;
@@ -48,7 +48,8 @@ public static class ConsoleLogListenerPatches
             }
 
             // Print prefix with the first color
-            string prefix = $"[Info   :{eventArgs.Source.SourceName}] ";
+            string levelStr = eventArgs.Level.ToString().PadRight(7);
+            string prefix = $"[{levelStr}:{eventArgs.Source.SourceName}] ";
             ConsoleManagerReflection.Write(prefix, currentColor, false);
 
             // Process the rest of the message
@@ -64,7 +65,7 @@ public static class ConsoleLogListenerPatches
                     }
                 }
 
-                // Find the next #CS or end of string
+                // Find the next #CS or end of a string
                 int nextCode = message.IndexOf("#CS", index, StringComparison.Ordinal);
                 int length = (nextCode == -1 ? message.Length : nextCode) - index;
 
